@@ -1,0 +1,147 @@
+--// Devil Neon - Speed Boost + Aura \\--
+
+-- Create ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local Status = Instance.new("TextLabel")
+local OnButton = Instance.new("TextButton")
+local OffButton = Instance.new("TextButton")
+local CloseButton = Instance.new("TextButton")
+
+ScreenGui.Name = "DevilNeonSpeedBoost"
+ScreenGui.Parent = game.CoreGui
+
+-- Main UI
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.75, 0, 0.4, 0)
+MainFrame.Size = UDim2.new(0, 230, 0, 140)
+MainFrame.BackgroundTransparency = 0.2
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+-- Style
+local corner = Instance.new("UICorner", MainFrame)
+corner.CornerRadius = UDim.new(0, 12)
+local stroke = Instance.new("UIStroke", MainFrame)
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(255, 0, 255)
+
+-- Title
+Title.Parent = MainFrame
+Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1, -40, 0, 25)
+Title.Position = UDim2.new(0, 10, 0, 8)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "💫 Devil Neon - Speed Boost"
+Title.TextColor3 = Color3.fromRGB(200, 0, 255)
+Title.TextScaled = true
+
+-- Close button
+CloseButton.Parent = MainFrame
+CloseButton.Text = "X"
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 20
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 100)
+CloseButton.Size = UDim2.new(0, 28, 0, 28)
+CloseButton.Position = UDim2.new(1, -32, 0, 6)
+Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(1, 0)
+CloseButton.MouseButton1Click:Connect(function()
+	ScreenGui:Destroy()
+end)
+
+-- Status
+Status.Parent = MainFrame
+Status.BackgroundTransparency = 1
+Status.Position = UDim2.new(0, 10, 0, 45)
+Status.Size = UDim2.new(1, -20, 0, 25)
+Status.Font = Enum.Font.Gotham
+Status.Text = "Status: OFF (Normal Speed)"
+Status.TextColor3 = Color3.fromRGB(255, 100, 100)
+Status.TextScaled = true
+
+-- Buttons
+OnButton.Parent = MainFrame
+OnButton.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
+OnButton.Position = UDim2.new(0, 20, 0, 85)
+OnButton.Size = UDim2.new(0, 80, 0, 30)
+OnButton.Text = "ON"
+OnButton.Font = Enum.Font.GothamBold
+OnButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+Instance.new("UICorner", OnButton).CornerRadius = UDim.new(0, 8)
+
+OffButton.Parent = MainFrame
+OffButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+OffButton.Position = UDim2.new(0, 130, 0, 85)
+OffButton.Size = UDim2.new(0, 80, 0, 30)
+OffButton.Text = "OFF"
+OffButton.Font = Enum.Font.GothamBold
+OffButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+Instance.new("UICorner", OffButton).CornerRadius = UDim.new(0, 8)
+
+-- Core logic
+local player = game.Players.LocalPlayer
+local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+local aura
+
+local function createAura(char)
+	if aura then aura:Destroy() end
+	local glow = Instance.new("ParticleEmitter")
+	glow.Name = "DevilNeonAura"
+	glow.Parent = char:WaitForChild("HumanoidRootPart")
+	glow.Texture = "rbxassetid://2848823651" -- purple galaxy spark texture
+	glow.Rate = 50
+	glow.Lifetime = NumberRange.new(1.2)
+	glow.Speed = NumberRange.new(0, 0)
+	glow.Rotation = NumberRange.new(0, 360)
+	glow.RotSpeed = NumberRange.new(50, 100)
+	glow.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1.5), NumberSequenceKeypoint.new(1, 0)})
+	glow.Color = ColorSequence.new(Color3.fromRGB(255, 0, 255), Color3.fromRGB(100, 0, 255))
+	glow.LightEmission = 1
+	glow.Transparency = NumberSequence.new(0.2)
+	aura = glow
+end
+
+local function removeAura()
+	if aura then
+		aura.Enabled = false
+		task.wait(1)
+		aura:Destroy()
+		aura = nil
+	end
+end
+
+local function setSpeed(boost)
+	if not player.Character then return end
+	humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+	if humanoid then
+		if boost then
+			humanoid.WalkSpeed = 200
+			Status.Text = "Status: ON (Speed Boost)"
+			Status.TextColor3 = Color3.fromRGB(0, 255, 0)
+			createAura(player.Character)
+		else
+			humanoid.WalkSpeed = 16
+			Status.Text = "Status: OFF (Normal Speed)"
+			Status.TextColor3 = Color3.fromRGB(255, 100, 100)
+			removeAura()
+		end
+	end
+end
+
+OnButton.MouseButton1Click:Connect(function()
+	setSpeed(true)
+end)
+
+OffButton.MouseButton1Click:Connect(function()
+	setSpeed(false)
+end)
+
+player.CharacterAdded:Connect(function(char)
+	repeat task.wait() until char:FindFirstChildOfClass("Humanoid")
+	humanoid = char:FindFirstChildOfClass("Humanoid")
+end)
