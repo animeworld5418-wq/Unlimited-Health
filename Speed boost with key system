@@ -1,0 +1,139 @@
+--// DEVIL KEY SYSTEM v2 — For "Unlimited Health / Speed Boost"
+--// Made by Devil Coder Pro+
+
+local TweenService = game:GetService("TweenService")
+local Player = game.Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+-------------------------------------------------
+-- VALID KEYS (50 STRONG, SINGLE USE)
+-------------------------------------------------
+local validKeys = {
+    "H3althX#N9m2Qz!", "D3v!lP0wR#T7xA4", "F9sT#B8v!k2nY5", "Q2r!V3pL#x7T8j",
+    "R6o!bC1#nT5mP8", "K4e!xF9#qR7yH2", "A3v!tS6#bM8lN5", "W2j!oK7#rE4xT1",
+    "U5m!Z8#nP9qF3r", "L8k!hN2#vB6mQ7", "Y9t!R3#cF8pL1x", "Z7n!V5#jD4mE9r",
+    "B2a!tX6#rP1nY8", "C9f!L4#bK7yR2m", "G5u!J8#nW3tE1p", "N4x!M2#lS9kD6v",
+    "S3z!B7#hT5mF8y", "E1v!H9#rG2qP6n", "O6p!L8#xM3jV4t", "I9n!T5#eR7cK2y",
+    "T2b!Y4#sW9mJ3p", "M8q!D1#vP6nL5r", "V7k!G3#tS2jQ9x", "P9f!J6#rH4mB8n",
+    "J3l!N7#xF9tR2q", "X1m!E5#vC8nY7p", "Q4r!K2#zW6hD9t", "L6p!T3#cG8nA1v",
+    "K9x!V8#fB5mH2y", "A7r!P4#qN1jT9x", "Z8t!L5#bE3nC7v", "B6n!G9#yS2mD1p",
+    "U2f!H7#xT9vL5r", "Y5k!Q4#cM8nW3p", "R3v!X2#jF9tB7q", "C1m!Z6#rE8nK4y",
+    "E9q!P5#bT7mL2v", "N7t!S3#xD4nY8p", "G4n!H9#rV2mC6q", "V5x!M8#yN1kT7p",
+    "O8r!J2#qF9bL4v", "T6m!E3#xC5nY9p", "S9f!L7#rP2kG1v", "F2k!H8#yM4nT3q",
+    "D3x!V9#cR6mJ7p", "P1l!N5#tY8qK2v", "J5v!C2#xE4mL9r", "K8m!Q6#nW3bH1p",
+    "H9n!S7#vF5pD2q", "Z2t!R8#kL3mY6x"
+}
+
+local usedKeys = {}
+
+-------------------------------------------------
+-- SCREEN GUI
+-------------------------------------------------
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "DevilKeySystem"
+screenGui.Parent = PlayerGui
+screenGui.ResetOnSpawn = false
+
+-------------------------------------------------
+-- KEY INPUT UI
+-------------------------------------------------
+local keyFrame = Instance.new("Frame")
+keyFrame.Size = UDim2.new(0, 420, 0, 220)
+keyFrame.Position = UDim2.new(0.5, -210, 0.5, -110)
+keyFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+keyFrame.BorderSizePixel = 0
+keyFrame.Parent = screenGui
+Instance.new("UICorner", keyFrame).CornerRadius = UDim.new(0, 12)
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 50)
+title.Position = UDim2.new(0, 0, 0, 8)
+title.BackgroundTransparency = 1
+title.Text = "DEVIL SPEED BOOST SCRIPT"
+title.Font = Enum.Font.GothamBold
+title.TextScaled = true
+title.TextColor3 = Color3.new(1,1,1)
+title.Parent = keyFrame
+
+local keyBox = Instance.new("TextBox")
+keyBox.Size = UDim2.new(0.86, 0, 0, 48)
+keyBox.Position = UDim2.new(0.07, 0, 0.35, 0)
+keyBox.PlaceholderText = "Enter your access key..."
+keyBox.Text = ""
+keyBox.Font = Enum.Font.Gotham
+keyBox.TextScaled = true
+keyBox.TextColor3 = Color3.new(1,1,1)
+keyBox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+keyBox.Parent = keyFrame
+Instance.new("UICorner", keyBox).CornerRadius = UDim.new(0, 10)
+
+local submitButton = Instance.new("TextButton")
+submitButton.Size = UDim2.new(0.5, 0, 0, 44)
+submitButton.Position = UDim2.new(0.25, 0, 0.74, 0)
+submitButton.Text = "SUBMIT"
+submitButton.Font = Enum.Font.GothamBold
+submitButton.TextScaled = true
+submitButton.TextColor3 = Color3.new(1,1,1)
+submitButton.BackgroundColor3 = Color3.fromRGB(0, 210, 120)
+submitButton.Parent = keyFrame
+Instance.new("UICorner", submitButton).CornerRadius = UDim.new(0, 10)
+
+-------------------------------------------------
+-- POPUP NOTIFICATION
+-------------------------------------------------
+local function showPopup(text, color)
+	local popup = Instance.new("Frame")
+	popup.Size = UDim2.new(0, 360, 0, 60)
+	popup.Position = UDim2.new(0.5, -180, 0.72, 0)
+	popup.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+	popup.BorderSizePixel = 0
+	popup.Parent = screenGui
+	Instance.new("UICorner", popup).CornerRadius = UDim.new(0, 10)
+
+	local lbl = Instance.new("TextLabel")
+	lbl.Size = UDim2.new(1, -20, 1, -10)
+	lbl.Position = UDim2.new(0, 10, 0, 5)
+	lbl.BackgroundTransparency = 1
+	lbl.Text = text
+	lbl.TextColor3 = color or Color3.new(1,1,1)
+	lbl.Font = Enum.Font.GothamBold
+	lbl.TextScaled = true
+	lbl.Parent = popup
+
+	TweenService:Create(popup, TweenInfo.new(0.35), {BackgroundTransparency = 0.0}):Play()
+	task.wait(1.4)
+	TweenService:Create(popup, TweenInfo.new(0.45), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 0)}):Play()
+	task.wait(0.45)
+	popup:Destroy()
+end
+
+-------------------------------------------------
+-- KEY VALIDATION
+-------------------------------------------------
+submitButton.MouseButton1Click:Connect(function()
+	local key = tostring(keyBox.Text or ""):gsub("^%s*(.-)%s*$", "%1")
+	if key == "" then
+		showPopup("Enter a key first", Color3.fromRGB(255,200,50))
+		return
+	end
+
+	if usedKeys[key] then
+		showPopup("❌ Key already used", Color3.fromRGB(255,80,80))
+		keyBox.Text = ""
+		return
+	end
+
+	if table.find(validKeys, key) then
+		usedKeys[key] = true
+		showPopup("✅ Key accepted, starting script...", Color3.fromRGB(120,255,140))
+		task.wait(0.8)
+		keyFrame:Destroy()
+
+		-- LOAD MAIN SCRIPT
+		local url = "https://raw.githubusercontent.com/animeworld5418-wq/Unlimited-Health/refs/heads/main/Speed%20Boost"
+		loadstring(game:HttpGet(url))()
+	else
+		showPopup("❌ Invalid key", Color3.fromRGB(255,80,80))
+		keyBox.Text = ""
+	end
+end)
